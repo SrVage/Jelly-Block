@@ -2,27 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VerticalChecker : MonoBehaviour
+public class HorizontalChecker : MonoBehaviour
 {
     public List<GameObject> _obj = new List<GameObject>();
-    private Vector3 _oldPos = new Vector3 (5f, 2f, 0);
+    private Vector3 _oldPos = new Vector3(10f, -1f, 0);
     private int _count = 0;
     // Start is called before the first frame update
     public void Move()
     {
 
-        transform.position = _oldPos + new Vector3(1, 0, 0);
+        transform.position = _oldPos + new Vector3(0, 1, 0);
         StartCoroutine("MoveAndWait");
     }
     private IEnumerator MoveAndWait()
     {
         yield return new WaitForSeconds(0.02f);
         _oldPos = transform.position;
-        transform.position = new Vector3(-10, 0, 0);
+        transform.position = new Vector3(10f, -15f, 0);
         yield return new WaitForSeconds(0.02f);
         Move();
-       // StopCoroutine("MoveAndWait");
-    } 
+        // StopCoroutine("MoveAndWait");
+    }
     private void Start()
     {
         Move();
@@ -37,7 +37,7 @@ public class VerticalChecker : MonoBehaviour
     private IEnumerator DestrObj()
     {
         Debug.Log("Destroy");
-       foreach (GameObject obj in _obj)
+        foreach (GameObject obj in _obj)
         {
             Destroy(obj);
             //_obj.RemoveAt(i-1);
@@ -60,8 +60,7 @@ public class VerticalChecker : MonoBehaviour
 
     private void Update()
     {
-        if (transform.position.x > 14.5)
+        if (transform.position.y > 8.5)
             Destroy(gameObject);
     }
-
 }
