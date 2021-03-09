@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 674285321981102861}
   - component: {fileID: 674285321981102858}
-  - component: {fileID: 4738231988629170626}
+  - component: {fileID: 1459979086168171104}
   m_Layer: 0
   m_Name: VerticallLine1
   m_TagString: Untagged
@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 674285321981102856}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 9, z: 1}
+  m_LocalScale: {x: 0.2, y: 8, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -58,7 +58,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &4738231988629170626
+--- !u!114 &1459979086168171104
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -67,7 +67,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 674285321981102856}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb8b9c261e1676f489d4c9c2f7d57730, type: 3}
+  m_Script: {fileID: 11500000, guid: 4d575e36d0f413643ab35d1ebf7eead3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _obj: []
+  _objects: []
+  _isChange: 0

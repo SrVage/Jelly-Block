@@ -5,32 +5,41 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     private GameObject _control = null;
-    [SerializeField] private GameObject _verticalChecker = null;
-    [SerializeField] private GameObject _horizontalChecker = null;
     public bool _onBackground = false;
-    public bool _otherBlock = false;
+    public bool otherBlock = false;
     private int _numOfChild = 0;
     private Vector3 _start = Vector3.zero;
     private Camera _cam = null;
     public Sprite sprite = null;
+    public Animator anim = null;
+    public float timeOfWait = 0f;
     private void Awake()
     {
        
         _cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         _control = GameObject.Find("Control");
+        anim = gameObject.GetComponentInChildren<Animator>();
+
+
+    }
+
+    private void Start()
+    {
+        sprite = GetComponentInChildren<SpriteRenderer>().sprite;
     }
 
     private void OnMouseDown()
     {
-        if (transform.parent == null) return;
+        if (transform.parent == null || _control.GetComponent<Control>().time <= 0 || _control.GetComponent<Control>()._endOfGame) return;
         _start = transform.parent.position;
+        _control.GetComponent<Control>().Lift();
 
     }
 
     private void OnMouseDrag()
     {
-        if (transform.parent == null) return;
-        transform.parent.localScale = new Vector3 (1.1f,1.1f,1);
+        if (transform.parent == null || _control.GetComponent<Control>().time <= 0 || _control.GetComponent<Control>()._endOfGame) return;
+        transform.parent.localScale = new Vector3 (1f,1f,1f);
         _control.GetComponent<Control>().onDrag = true;
         Vector3 _pos = new Vector3(_cam.ScreenToWorldPoint(Input.mousePosition).x, _cam.ScreenToWorldPoint(Input.mousePosition).y, 0);
         var offset = transform.parent.position - transform.position;
@@ -40,61 +49,61 @@ public class Block : MonoBehaviour
 
     private void OnMouseUp()
     {
-        if (transform.parent == null) return;
-        transform.parent.localScale = new Vector3(1f, 1f, 1);
+        if (transform.parent == null || _control.GetComponent<Control>().time <= 0 || _control.GetComponent<Control>()._endOfGame) return;
         _control.GetComponent<Control>().onDrag = false;
         _numOfChild = transform.parent.childCount;
         if (transform.parent.gameObject.GetComponent<DestroyGO>().OnBackground(_numOfChild))
         {
+            _control.GetComponent<Control>().Drop();
+            transform.parent.localScale = new Vector3(1, 1, 1);
             transform.parent.position = new Vector3(Mathf.RoundToInt(transform.parent.position.x), Mathf.RoundToInt(transform.parent.position.y), 0);
             Destroy(transform.parent.gameObject, 0.2f);
             transform.parent.gameObject.GetComponent<DestroyGO>().DestroyParent(_numOfChild);
-            //Instantiate(_verticalChecker, Vector3.zero, Quaternion.identity);
-            //Instantiate(_horizontalChecker, Vector3.zero, Quaternion.identity);
-           // gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+            gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+
+            Invoke("FalseTrig", 0.2f);
         }
         else
+        {
             transform.parent.position = _start;
+            transform.parent.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+        }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void FalseTrig()
     {
-        if (collision.gameObject.CompareTag("StayBlock")) transform.parent.gameObject.GetComponent<DestroyGO>().OnBlock(true);
-        if (collision.gameObject.CompareTag("Background")) _onBackground = true;
+        gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+        _control.GetComponent<Control>().move = 0;
+        _control.GetComponent<Control>().startChecker = true;
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("StayBlock")) transform.parent.gameObject.GetComponent<DestroyGO>().OnBlock(true);
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("StayBlock")) transform.parent.gameObject.GetComponent<DestroyGO>().OnBlock(false);
-        if (collision.gameObject.CompareTag("Background")) _onBackground = false;
-
-    }
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("StayBlock")) transform.parent.gameObject.GetComponent<DestroyGO>().OnBlock(true);
+        
+    //}
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        Debug.Log(collision.shapeCount);
-        if (collision.CompareTag("Block")) collision.gameObject.GetComponentInParent<DestroyGO>().OnBlock(true);
+        if (collision.gameObject.CompareTag("StayBlock")) otherBlock = true;//transform.parent.gameObject.GetComponent<DestroyGO>().OnBlock(true);
+        if (collision.gameObject.CompareTag("Background")) _onBackground = true;
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Block")) collision.gameObject.GetComponentInParent<DestroyGO>().OnBlock(false);
+        if (collision.gameObject.CompareTag("StayBlock")) otherBlock = false; //transform.parent.gameObject.GetComponent<DestroyGO>().OnBlock(false);
+        if (collision.gameObject.CompareTag("Background")) _onBackground = false;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        sprite = GetComponent<SpriteRenderer>().sprite;
+        if (collision.gameObject.CompareTag("StayBlock")) otherBlock = true;//transform.parent.gameObject.GetComponent<DestroyGO>().OnBlock(true);
+        if (collision.gameObject.CompareTag("Background")) _onBackground = true;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnCollisionExit2D(Collision2D collision)
     {
-
+        if (collision.gameObject.CompareTag("StayBlock")) otherBlock = false; //transform.parent.gameObject.GetComponent<DestroyGO>().OnBlock(false);
+        if (collision.gameObject.CompareTag("Background")) _onBackground = false;
     }
 }
