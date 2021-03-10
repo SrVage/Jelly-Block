@@ -10,7 +10,7 @@ public class Checker : MonoBehaviour
     private void Awake()
     {
         _control = GameObject.Find("Control");
-        Check();
+        Invoke("Check", 0.1f);
     }
     private void Check()
     {
@@ -30,17 +30,22 @@ public class Checker : MonoBehaviour
         {
             transform.position += new Vector3(1, 0, 0);
             //Check();
-            Invoke("Check", 0.05f);
+            Invoke("Check", 0.01f);
         }
         else
         {
             if (transform.position.y > -4)
             {
-                transform.position += new Vector3(-8, -1, 0);
+                transform.position += new Vector3(-10, -1, 0);
                 //Check();
-                Invoke("Check", 0.05f);
+                Invoke("Check", 0.01f);
             }
-            else Destroy(gameObject);
+            else
+            {
+                _control.GetComponent<Control>().numOfChecker--;
+                Destroy(gameObject);
+            }
+
         }
         
     }

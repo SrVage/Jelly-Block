@@ -15,12 +15,19 @@ public class Block : MonoBehaviour
     public float timeOfWait = 0f;
     private void Awake()
     {
-       
+        transform.position = new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);  
         _cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         _control = GameObject.Find("Control");
         anim = gameObject.GetComponentInChildren<Animator>();
+    }
 
-
+    private void Update()
+    {
+        if (_control.GetComponent<Control>()._endOfGame)
+        {
+            gameObject.GetComponentInChildren<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/icons2_30");
+            anim.SetTrigger("Stone");
+        }
     }
 
     private void Start()
@@ -59,8 +66,7 @@ public class Block : MonoBehaviour
             transform.parent.position = new Vector3(Mathf.RoundToInt(transform.parent.position.x), Mathf.RoundToInt(transform.parent.position.y), 0);
             Destroy(transform.parent.gameObject, 0.2f);
             transform.parent.gameObject.GetComponent<DestroyGO>().DestroyParent(_numOfChild);
-            gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
-
+           // gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
             Invoke("FalseTrig", 0.2f);
         }
         else
@@ -72,7 +78,8 @@ public class Block : MonoBehaviour
 
     private void FalseTrig()
     {
-        gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+        //gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+
         _control.GetComponent<Control>().move = 0;
         _control.GetComponent<Control>().startChecker = true;
     }
@@ -83,7 +90,7 @@ public class Block : MonoBehaviour
         
     //}
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("StayBlock")) otherBlock = true;//transform.parent.gameObject.GetComponent<DestroyGO>().OnBlock(true);
         if (collision.gameObject.CompareTag("Background")) _onBackground = true;

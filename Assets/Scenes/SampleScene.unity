@@ -582,10 +582,13 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 25d44de8d395239408f078e39ec9490a, type: 3}
   - {fileID: 8300000, guid: 4413f8fa36f637d439d6f46abdeafc40, type: 3}
   - {fileID: 8300000, guid: 530e2015aeb66a64e8ad1c7150470849, type: 3}
+  - {fileID: 8300000, guid: 10e333f1da57d774c8dd7a06066085d6, type: 3}
   time: 100
   move: 0
   startChecker: 0
   _endOfGame: 0
+  numOfChecker: 0
+  _recheck: 0
 --- !u!4 &1694208688
 Transform:
   m_ObjectHideFlags: 0
@@ -713,7 +716,7 @@ GameObject:
   m_TagString: Background
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!212 &2040211804
 SpriteRenderer:
@@ -789,7 +792,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.03, y: 0.07}
@@ -813,7 +816,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2040211803}
-  m_BodyType: 1
+  m_BodyType: 2
   m_Simulated: 1
   m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
@@ -881,7 +884,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: 713b331a100ae4846b8343c87db7d0bc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

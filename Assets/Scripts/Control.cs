@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 public class Control : MonoBehaviour
 {
     public bool onDrag = false;
@@ -22,9 +23,12 @@ public class Control : MonoBehaviour
     public bool startChecker = false;
     public bool _endOfGame = false;
     private GameObject[] obj = null;
+    public int numOfChecker = 0;
+    public int _recheck = 0;
 
     private void Awake()
     {
+        Screen.fullScreen = false;
         audio = GetComponent<AudioSource>();
         for (int i =0; i<8; i++)
         {
@@ -53,22 +57,43 @@ public class Control : MonoBehaviour
         }
     }
 
+    IEnumerator Check ()
+    {
+        Debug.Log("Start");
+        int ch = 0;
+        yield return new WaitForSeconds(0.2f);
+        for (int i = 0; i < 4; i++)
+        {
+            if (numOfChecker == 0 && move == 0)
+            {
+                Debug.Log("Cycle");
+                ch++;
+            }
+            else
+            {
+                Debug.Log("Stop");
+            }
+                yield return new WaitForSeconds(0.5f);
+        }
+        if (ch > 0)
+        {
+            EndOf();
+        }
+        else StopCoroutine("Check");
+    }
+
 
     private void Reset()
     {
-            startChecker = false;
-            Invoke("CheckEnd", 3f);   
-    }
-
-    private void CheckEnd()
-    {
-        if (move == 0 && !startChecker)
-            Invoke("EndOf", 3f);
+        StopCoroutine("Check");
+        startChecker = false;
+        StartCoroutine("Check");
     }
 
     private void EndOf()
     {
-        if (move == 0) _endOfGame = true;
+        _endOfGame = true;
+        GameOver();
     }
 
     private void OnGUI()
@@ -108,5 +133,10 @@ public class Control : MonoBehaviour
     public void ScoresPlus()
     {
         audio.PlayOneShot(audioClips[3]);
+    }
+
+    public void GameOver()
+    {
+        audio.PlayOneShot(audioClips[4]);
     }
 }

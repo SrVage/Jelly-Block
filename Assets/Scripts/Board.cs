@@ -87,8 +87,8 @@ public class Board : MonoBehaviour
             System.Array.Resize<Block>(ref _piece, num);
             for (int i = 0; i < shape.Length; i++)
             {
-                    _piece[i].x = shape[i] % 4;
-                    _piece[i].y = shape[i] / 4;
+                    _piece[i].x = Mathf.RoundToInt(shape[i] % 4);
+                    _piece[i].y = Mathf.RoundToInt(shape[i] / 4);
                 }
             Sprite sprite = _sprites[Random.Range(0, _sprites.Length)];
             GameObject obj = new GameObject();
