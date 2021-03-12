@@ -17,17 +17,20 @@ public class Control : MonoBehaviour
     [SerializeField] private AudioClip[] audioClips = null;
     private AudioSource audio = null;
     public float time = 20;
-    private int _minutes = 0;
-    private int _seconds = 0;
+    public int _minutes = 0;
+    public int _seconds = 0;
     public int move = 0;
     public bool startChecker = false;
     public bool _endOfGame = false;
     private GameObject[] obj = null;
     public int numOfChecker = 0;
     public int _recheck = 0;
+    public int colourScheme = 0;
+    [SerializeField] private GameObject _canvas = null;
 
     private void Awake()
     {
+        colourScheme = Random.Range(0, 4);
         Screen.fullScreen = false;
         audio = GetComponent<AudioSource>();
         for (int i =0; i<8; i++)
@@ -41,6 +44,7 @@ public class Control : MonoBehaviour
 
     private void Update()
     {
+        audio.volume = _canvas.GetComponent<Canvas>().sound;
         if (time <= 0 || _endOfGame) return;
         time -= Time.deltaTime;
         _seconds = System.Convert.ToInt32(time)%60;
@@ -53,6 +57,7 @@ public class Control : MonoBehaviour
         }
         if (startChecker)
         {
+            StopCoroutine("Check");
             Invoke("Reset", 0.05f);
         }
     }
@@ -66,12 +71,7 @@ public class Control : MonoBehaviour
         {
             if (numOfChecker == 0 && move == 0)
             {
-                Debug.Log("Cycle");
                 ch++;
-            }
-            else
-            {
-                Debug.Log("Stop");
             }
                 yield return new WaitForSeconds(0.5f);
         }
@@ -98,22 +98,22 @@ public class Control : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(Screen.width - 550, 100, 400, 200), scores.ToString(), _gui);
-        GUI.Label(new Rect(200, 100, 400, 200), _minutes.ToString()+":"+_seconds.ToString(), _gui);
+        //GUI.Label(new Rect(Screen.width - 550, 100, 400, 200), scores.ToString(), _gui);
+        //GUI.Label(new Rect(200, 100, 400, 200), _minutes.ToString()+":"+_seconds.ToString(), _gui);
         //GUI.Label(new Rect(Screen.width/2, 50, 100, 50), move.ToString(), _gui);
        // if (_endOfGame) GUI.Label(new Rect(Screen.width / 2, 50, 300, 50), "Нет ходов", _gui);
-        if (time <= 0)
-        {
-            GUI.Box(new Rect((Screen.width / 2) - 300, 300, 600, 800), "Время вышло", _gui2);
-            GUI.Label(new Rect((Screen.width/2)-50, 500, 100, 50), "Очки: " + scores.ToString(), _gui3);
-            if (GUI.Button(new Rect((Screen.width / 2) - 150, 700, 300, 200), "Повтор", _gui2)) UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-        }
-        if (_endOfGame)
-        {
-            GUI.Box(new Rect((Screen.width / 2) - 300, 300, 600, 800), "Ходов нет", _gui2);
-            GUI.Label(new Rect((Screen.width / 2) - 50, 500, 100, 50), "Очки: " + scores.ToString(), _gui3);
-            if (GUI.Button(new Rect((Screen.width / 2) - 150, 700, 300, 200), "Повтор", _gui2)) UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-        }
+        //if (time <= 0)
+        //{
+        //    GUI.Box(new Rect((Screen.width / 2) - 300, 300, 600, 800), "Время вышло", _gui2);
+        //    GUI.Label(new Rect((Screen.width/2)-50, 500, 100, 50), "Очки: " + scores.ToString(), _gui3);
+        //    if (GUI.Button(new Rect((Screen.width / 2) - 150, 700, 300, 200), "Повтор", _gui2)) UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        //}
+        //if (_endOfGame)
+        //{
+        //    GUI.Box(new Rect((Screen.width / 2) - 300, 300, 600, 800), "Ходов нет", _gui2);
+        //    GUI.Label(new Rect((Screen.width / 2) - 50, 500, 100, 50), "Очки: " + scores.ToString(), _gui3);
+        //    if (GUI.Button(new Rect((Screen.width / 2) - 150, 700, 300, 200), "Повтор", _gui2)) UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        //}
     }
 
     public void Lift()

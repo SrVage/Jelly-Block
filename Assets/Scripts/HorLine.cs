@@ -6,6 +6,7 @@ public class HorLine : MonoBehaviour
 {
     public List<GameObject> _obj = new List<GameObject>();
     private GameObject _ref = null;
+    private GameObject _plusScores = null;
     public GameObject[] _objects = null;
     private bool _startAnim = false;
     private GameObject _control = null;
@@ -13,6 +14,7 @@ public class HorLine : MonoBehaviour
 
     private void Awake()
     {
+        _plusScores = Resources.Load<GameObject>("Prefabs/plusScores");
         _control = GameObject.Find("Control");
     }
 
@@ -109,6 +111,7 @@ public class HorLine : MonoBehaviour
             Destroy(obj);
         }
         _control.GetComponent<Control>().ScoresPlus();
+        Instantiate(_plusScores, gameObject.transform.position, Quaternion.identity);
         _control.GetComponent<Control>().scores += 100;
         _control.GetComponent<Control>().clear = true;
         _obj.Clear();
