@@ -11,12 +11,60 @@ public class DestroyGO : MonoBehaviour
     private bool _back = false;
     private GameObject _control = null;
     private Vector3 _lastPos = Vector3.zero;
+    private Vector3 _start = Vector3.zero;
+    private Camera _cam = null;
+    private Vector3 _offset = Vector3.zero;
 
     private void Start()
     {
+        _cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         _control = GameObject.Find("Control");
         Size();
     }
+
+    private void OnMouseDown()
+    {
+        if (_control.GetComponent<Control>().time <= 0 || _control.GetComponent<Control>()._endOfGame) return;
+        _start = transform.position;
+        _control.GetComponent<Control>().Lift();
+        Vector3 _pos = new Vector3(_cam.ScreenToWorldPoint(Input.mousePosition).x, _cam.ScreenToWorldPoint(Input.mousePosition).y, 0);
+        _offset = transform.position - new Vector3(1, -1, 0) - _pos;
+    }
+
+    private void OnMouseDrag()
+    {
+        if (_control.GetComponent<Control>().time <= 0 || _control.GetComponent<Control>()._endOfGame) return;
+        transform.localScale = new Vector3(1f, 1f, 1f);
+        _control.GetComponent<Control>().onDrag = true;
+        Vector3 _pos = new Vector3(_cam.ScreenToWorldPoint(Input.mousePosition).x, _cam.ScreenToWorldPoint(Input.mousePosition).y, 0);
+       // var offset = transform.position - _pos;
+        transform.position = _pos + _offset;
+    }
+
+
+    private void OnMouseUp()
+    {
+        if (_control.GetComponent<Control>().time <= 0 || _control.GetComponent<Control>()._endOfGame) return;
+        _control.GetComponent<Control>().onDrag = false;
+        if (OnBackground(transform.childCount))
+        {
+            _control.GetComponent<Control>().Drop();
+            transform.localScale = new Vector3(1, 1, 1);
+            transform.position = new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
+            Destroy(gameObject, 0.2f);
+            DestroyParent(transform.childCount);
+            _control.GetComponent<Control>().move = 0;
+            _control.GetComponent<Control>().startChecker = true;
+
+            //Invoke("FalseTrig", 0.2f);
+        }
+        else
+        {
+            transform.position = _start;
+            transform.localScale = new Vector3(0.6f, 0.6f, 1f);
+        }
+    }
+
     private void Size()
     {
         if (transform.localScale.x < 0.6f)
@@ -27,6 +75,11 @@ public class DestroyGO : MonoBehaviour
         else
         {
             transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+            //for (int i = 0; i < transform.childCount; i++)
+            //{
+            //    Transform child = gameObject.transform.GetChild(i);
+            //    child.transform.position = new Vector3(Mathf.RoundToInt(child.transform.position.x), Mathf.RoundToInt(child.transform.position.y), 0);
+            //}
             _control.GetComponent<Control>().startChecker = true;
         }
     }
@@ -39,7 +92,10 @@ public class DestroyGO : MonoBehaviour
             child.GetComponentInChildren<SpriteRenderer>().sortingOrder = 1;
             child.transform.position = new Vector3(Mathf.RoundToInt(child.transform.position.x), Mathf.RoundToInt(child.transform.position.y), 0);
             child.transform.tag = "StayBlock";
-            child.GetComponent<BoxCollider2D>().isTrigger = false;
+            child.GetComponent<BoxCollider2D>().isTrigger = true;
+            child.GetComponent<BoxCollider2D>().edgeRadius = 0.1f;
+            //child.GetComponent<Block>().enabled = false;
+            child.GetComponent<Rigidbody2D>().isKinematic = false;
             child.parent = null;
         }
     }
@@ -76,14 +132,13 @@ public class DestroyGO : MonoBehaviour
         if (_control.GetComponent<Control>().startChecker)
         { 
             CheckFreeSpace();
-                }
+        }
     }
-
 
     private void CreateProjection()
     {
         obj = Instantiate(gameObject, new Vector3(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0), Quaternion.Euler(new Vector3(0, 0, 0)));
-        obj.transform.localScale = new Vector3(1f, 1f, 1);
+        obj.transform.localScale = new Vector3(1f, 1f, 1f);
         obj.GetComponent<DestroyGO>().enabled = false;
         for (int i = 0; i < obj.transform.childCount; i++)
         {
@@ -100,19 +155,32 @@ public class DestroyGO : MonoBehaviour
     {
         if (_checker == null)
         {
-            _checker = Instantiate(gameObject, new Vector3(4, 5, 0), Quaternion.Euler(new Vector3(0, 0, 0)));
-            _checker.transform.localScale = new Vector3(1f, 1f, 1);
-            _checker.GetComponent<DestroyGO>().enabled = false;
-            _checker.tag = "Checker";
-            for (int i = 0; i < _checker.transform.childCount; i++)
+            for (int k = 0; k < 4; k++)
             {
-                Transform child = _checker.transform.GetChild(i);
-                child.GetComponentInChildren<Animator>().enabled = false;
-                child.GetComponentInChildren<SpriteRenderer>().enabled = false;
-                child.GetComponent<BoxCollider2D>().isTrigger = true;
+                gameObject.transform.localScale = new Vector3(1, 1, 1);
+                _checker = Instantiate(gameObject, new Vector3(5, (4-2*k), 0), Quaternion.identity);
+                _checker.GetComponent<DestroyGO>().enabled = false;
+                _checker.GetComponent<BoxCollider2D>().enabled = false;
+                _checker.transform.localScale = new Vector3(1, 1, 1);
+                gameObject.transform.localScale = new Vector3(0.6f, 0.6f, 1);
+                _checker.tag = "Checker";
+
+                for (int i = 0; i < _checker.transform.childCount; i++)
+                {
+                    Transform child = _checker.transform.GetChild(i);
+                    child.GetComponentInChildren<Animator>().enabled = false;
+                    child.GetComponentInChildren<SpriteRenderer>().enabled = false;
+                    child.GetComponent<BoxCollider2D>().isTrigger = true;
+                    child.GetComponent<Block>().enabled = true;
+                }
+                Checker script = _checker.AddComponent<Checker>();
+                if (_checker.transform.childCount == 0)
+                {
+                    Destroy(_checker);
+                    return;
+                }
+                _control.GetComponent<Control>().numOfChecker++;
             }
-            Checker script = _checker.AddComponent<Checker>();
-            _control.GetComponent<Control>().numOfChecker++;
         }
     }
 }

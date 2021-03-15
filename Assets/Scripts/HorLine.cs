@@ -5,9 +5,10 @@ using UnityEngine;
 public class HorLine : MonoBehaviour
 {
     public List<GameObject> _obj = new List<GameObject>();
+    //public HashSet<GameObject> _obj = new HashSet<GameObject>();
     private GameObject _ref = null;
     private GameObject _plusScores = null;
-    public GameObject[] _objects = null;
+    //public GameObject[] _objects = null;
     private bool _startAnim = false;
     private GameObject _control = null;
     public bool _isChange = false;
@@ -19,11 +20,21 @@ public class HorLine : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    private void OnTriggerEnter2D(Collider2D collision)
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("ProjBlock")) _ref = collision.gameObject;
+    //    if (collision.gameObject.CompareTag("ProjBlock") || collision.gameObject.CompareTag("StayBlock"))
+    //    {
+    //        _obj.Add(collision.gameObject);
+    //    }
+    //}
+
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("ProjBlock")) _ref = collision.gameObject;
         if (collision.gameObject.CompareTag("ProjBlock") || collision.gameObject.CompareTag("StayBlock"))
         {
+            if (!_obj.Contains(collision.gameObject))
             _obj.Add(collision.gameObject);
         }
     }
@@ -31,17 +42,19 @@ public class HorLine : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("ProjBlock"))
+        if (_startAnim) return;
+        if (collision.gameObject.CompareTag("ProjBlock") || collision.gameObject.CompareTag("StayBlock"))
         {
-            gameObject.GetComponent<BoxCollider2D>().enabled = false;
-            Invoke("Toggle", 0.02f);
+            _obj.Remove(collision.gameObject);
         }
     }
 
     private void Toggle()
     {
-        _obj.Clear();
-        gameObject.GetComponent<BoxCollider2D>().enabled = true;
+        //_obj.Clear();
+        //gameObject.GetComponent<BoxCollider2D>().enabled = true;
+        _control.GetComponent<Control>().clear = false;
+
 
     }
 
@@ -53,14 +66,15 @@ public class HorLine : MonoBehaviour
             if (!_control.GetComponent<Control>().onDrag)
             {
                 _startAnim = true;
-                Invoke("DestroyPlusScores", 0.25f);
+                Invoke("DestroyPlusScores", 0.15f);
+               // DestroyPlusScores();
             }
-            else if (_control.GetComponent<Control>().onDrag && !_isChange) Invoke("Check", 0.1f);
+            else if (_control.GetComponent<Control>().onDrag && !_isChange) Invoke("Check", 0.01f);
         }
         else
         {
             if (_isChange)
-            Invoke("CheckBack", 0.1f);
+                Invoke("CheckBack", 0.01f);
         }
     }
 
@@ -76,9 +90,10 @@ public class HorLine : MonoBehaviour
     {
         if (_control.GetComponent<Control>().clear)
         {
-            gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            _obj.Clear();
+            //gameObject.GetComponent<BoxCollider2D>().enabled = false;
             Invoke("Toggle", 0.02f);
-            _control.GetComponent<Control>().clear = false;
+            //_control.GetComponent<Control>().clear = false;
         }
 
     }
@@ -100,7 +115,7 @@ public class HorLine : MonoBehaviour
                 anim.SetTrigger("Destroy");
                 obj.GetComponent<BoxCollider2D>().enabled = false;
             }
-            Invoke("Coin", 0.5f);
+            Invoke("Coin", 0.2f);
         }
     }
 
@@ -111,21 +126,24 @@ public class HorLine : MonoBehaviour
             Destroy(obj);
         }
         _control.GetComponent<Control>().ScoresPlus();
-        Instantiate(_plusScores, gameObject.transform.position, Quaternion.identity);
+        var plus = Instantiate(_plusScores, gameObject.transform.position, Quaternion.identity);
+        Destroy(plus, 1.0f);
         _control.GetComponent<Control>().scores += 100;
         _control.GetComponent<Control>().clear = true;
-        _obj.Clear();
+        //_obj.Clear();
         _startAnim = false;
     }
 
     private void ChangeSprite()
     {
-        _control.GetComponent<Control>().isSimilarBlocks = true;
+        //_control.GetComponent<Control>().isSimilarBlocks = true;
         if (_obj != null)
         {
             foreach (GameObject obj in _obj)
             {
                 obj.GetComponentInChildren<SpriteRenderer>().sprite = _ref.GetComponentInChildren<SpriteRenderer>().sprite;
+                Animator anim = obj.GetComponentInChildren<Animator>();
+                anim.SetBool("vibr", true);
             }
             _isChange = true;
         }
@@ -147,9 +165,11 @@ public class HorLine : MonoBehaviour
                 foreach (GameObject obj in _obj)
                 {
                     obj.GetComponentInChildren<SpriteRenderer>().sprite = obj.GetComponent<Block>().sprite;
+                    Animator anim = obj.GetComponentInChildren<Animator>();
+                    anim.SetBool("vibr", false);
                 }
             }
-                _isChange = false;
+            _isChange = false;
         }
     }
 

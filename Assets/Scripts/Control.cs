@@ -8,9 +8,6 @@ public class Control : MonoBehaviour
     [SerializeField] private GameObject _vertical = null;
     private Vector3 _posHor = new Vector3(10.5f, -2, 1);
     private Vector3 _posVer = new Vector3(7, 1.5f, 1);
-    [SerializeField] private GUIStyle _gui = null;
-    [SerializeField] private GUIStyle _gui2 = null;
-    [SerializeField] private GUIStyle _gui3 = null;
     public bool isSimilarBlocks = false;
     private float _timer = 0;
     public bool clear = false;
@@ -30,8 +27,8 @@ public class Control : MonoBehaviour
 
     private void Awake()
     {
+        Screen.orientation = ScreenOrientation.Portrait;
         colourScheme = Random.Range(0, 4);
-        Screen.fullScreen = false;
         audio = GetComponent<AudioSource>();
         for (int i =0; i<8; i++)
         {
@@ -57,63 +54,53 @@ public class Control : MonoBehaviour
         }
         if (startChecker)
         {
-            StopCoroutine("Check");
+           // StopCoroutine("Check");
             Invoke("Reset", 0.05f);
         }
     }
 
-    IEnumerator Check ()
-    {
-        Debug.Log("Start");
-        int ch = 0;
-        yield return new WaitForSeconds(0.2f);
-        for (int i = 0; i < 4; i++)
-        {
-            if (numOfChecker == 0 && move == 0)
-            {
-                ch++;
-            }
-                yield return new WaitForSeconds(0.5f);
-        }
-        if (ch > 0)
-        {
-            EndOf();
-        }
-        else StopCoroutine("Check");
-    }
+    //IEnumerator Check ()
+    //{
+    //    int ch = 0;
+    //    Debug.Log("cor");
+    //    yield return new WaitForSeconds(0.1f);
+    //    for (int i = 0; i < 4; i++)
+    //    {
+    //        if (numOfChecker == 0 && move == 0)
+    //        {
+    //            ch++;
+    //            Debug.Log(ch);
+    //        }
+    //            yield return new WaitForSeconds(0.2f);
+    //    }
+    //    if (ch > 2)
+    //    {
+    //        EndOf();
+    //    }
+    //    else StopCoroutine("Check");
+    //}
 
 
     private void Reset()
     {
-        StopCoroutine("Check");
+        Debug.Log("reset");
+        //StopCoroutine("Check");
         startChecker = false;
-        StartCoroutine("Check");
+        Invoke("Check", 1f);
+        //StartCoroutine("Check");
+    }
+
+    private void Check()
+    {
+        Debug.Log("check");
+        if (numOfChecker == 0 && move == 0) EndOf();
     }
 
     private void EndOf()
     {
+        Debug.Log("end");
         _endOfGame = true;
         GameOver();
-    }
-
-    private void OnGUI()
-    {
-        //GUI.Label(new Rect(Screen.width - 550, 100, 400, 200), scores.ToString(), _gui);
-        //GUI.Label(new Rect(200, 100, 400, 200), _minutes.ToString()+":"+_seconds.ToString(), _gui);
-        //GUI.Label(new Rect(Screen.width/2, 50, 100, 50), move.ToString(), _gui);
-       // if (_endOfGame) GUI.Label(new Rect(Screen.width / 2, 50, 300, 50), "Нет ходов", _gui);
-        //if (time <= 0)
-        //{
-        //    GUI.Box(new Rect((Screen.width / 2) - 300, 300, 600, 800), "Время вышло", _gui2);
-        //    GUI.Label(new Rect((Screen.width/2)-50, 500, 100, 50), "Очки: " + scores.ToString(), _gui3);
-        //    if (GUI.Button(new Rect((Screen.width / 2) - 150, 700, 300, 200), "Повтор", _gui2)) UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-        //}
-        //if (_endOfGame)
-        //{
-        //    GUI.Box(new Rect((Screen.width / 2) - 300, 300, 600, 800), "Ходов нет", _gui2);
-        //    GUI.Label(new Rect((Screen.width / 2) - 50, 500, 100, 50), "Очки: " + scores.ToString(), _gui3);
-        //    if (GUI.Button(new Rect((Screen.width / 2) - 150, 700, 300, 200), "Повтор", _gui2)) UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-        //}
     }
 
     public void Lift()

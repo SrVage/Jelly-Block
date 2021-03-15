@@ -39,17 +39,17 @@ public class Board : MonoBehaviour
 
     private int[,] _shapes = new int[,]
     {
-        {5, 20, 20, 20, 20, 20, 20, 20 ,20}, //одиночный
+        {6, 20, 20, 20, 20, 20, 20, 20 ,20}, //одиночный
         {5, 6, 20, 20, 20, 20, 20, 20 ,20}, //двойной
         {5, 6, 7, 20, 20, 20, 20, 20 ,20}, //тройной прямой
         {5, 6, 10, 20, 20, 20, 20, 20 ,20}, //тройной изогнутый
         {4, 5, 6, 7, 20, 20, 20, 20 ,20}, //четверной прямой
-        {4, 5, 6, 2, 20, 20, 20, 20 ,20}, //четверной изогнутый
+        {3, 5, 6, 7, 20, 20, 20, 20 ,20}, //четверной изогнутый
         {5, 6, 9, 10, 20, 20, 20, 20 ,20}, //квадрат
         {5, 6, 8, 9, 20, 20, 20, 20 ,20}, //z
-        {4, 8, 9, 12, 20, 20, 20, 20 ,20}, //t
-        {0, 1, 2, 4, 5, 6, 8, 9 ,10}, //девятирной квадрат
-        {0, 1, 2, 4, 20, 6, 8, 9 ,10}, //восьмерной квадрат
+        {1, 5, 9, 6, 20, 20, 20, 20 ,20}, //t
+        {1, 2, 3, 5, 6, 7, 9, 10 ,11}, //девятирной квадрат
+        {1, 2, 3, 5, 20, 7, 9, 10 ,11}, //восьмерной квадрат
     };
 
     // Start is called before the first frame update
@@ -72,7 +72,8 @@ public class Board : MonoBehaviour
         for (int j = 0; j < 3; j++)
         {
 
-            int n = Random.Range(0, 11);
+          int n = Random.Range(0, 11);
+          // n = 0;
             int[] shape = new int [9];
             int num = 0;
             for (int k = 0; k < 9; k++)
@@ -85,11 +86,31 @@ public class Board : MonoBehaviour
             }
                 System.Array.Resize<int>(ref shape, num);
             System.Array.Resize<Block>(ref _piece, num);
+            float offsetX = 0;
+            float offsetY = 0;
             for (int i = 0; i < shape.Length; i++)
             {
-                    _piece[i].x = Mathf.RoundToInt(shape[i] % 4);
-                    _piece[i].y = Mathf.RoundToInt(shape[i] / 4);
-                }
+                _piece[i].x = Mathf.RoundToInt(shape[i] % 4);
+                offsetX += _piece[i].x;
+                _piece[i].y = Mathf.RoundToInt(shape[i] / 4);
+                offsetY += _piece[i].y;
+            }
+
+            offsetX = offsetX / shape.Length;
+            offsetY = offsetY / shape.Length;
+
+            //if (n == 1 || n==6 || n==7)
+            //{
+            //    offsetX = 1;
+            //    offsetY = 1;
+            //}
+            //if (n==4)
+            //{
+            //    offsetX = 2;
+            //    offsetY = 1;
+            //}
+
+
             Sprite sprite = _sprites[Random.Range(0, _sprites.Length)];
             GameObject obj = new GameObject();
             
@@ -100,8 +121,12 @@ public class Board : MonoBehaviour
                 sr.sprite = sprite;
             }
             DestroyGO _script = obj.AddComponent<DestroyGO>();
-            obj.transform.position = new Vector3(6.5f+3f*j, -8, 0);
-            obj.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+            BoxCollider2D bc = obj.AddComponent<BoxCollider2D>();
+            bc.isTrigger = true;
+            bc.size = new Vector2(4, 4);
+            bc.offset = new Vector2(offsetX, offsetY);
+            obj.transform.position = new Vector3(6.5f+3f*j, -6, 0);
+            obj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             
         }
 

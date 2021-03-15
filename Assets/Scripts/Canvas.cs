@@ -105,27 +105,32 @@ public class Canvas : MonoBehaviour
             _scores.text = _control.GetComponent<Control>().scores.ToString();
         if (_control.GetComponent<Control>().time <= 0 || _control.GetComponent<Control>()._endOfGame)
         {
-            _endScores.enabled = true;
-            _endCoin.enabled = true;
-            _play.enabled = false;
-            _win.gameObject.SetActive(true);
-            _ingame.SetActive(false);
-            _end.enabled = true;
-            _menu.gameObject.SetActive(true);
-            _menu.sprite = _spritesMenu[_control.GetComponent<Control>().colourScheme];
-            _prefMenu.sprite = _spritesMenu[_control.GetComponent<Control>().colourScheme];
-            _win.enabled = true;
-            _win.sprite = _sprites[_control.GetComponent<Control>().colourScheme];
-            _endScores.text = _control.GetComponent<Control>().scores.ToString();
+            Invoke("ShowMenu", 0.2f);
+        }
+    }
 
-            if (_control.GetComponent<Control>().time <= 0)
-            {
-                _end.text = "End of time";
-            }
-            if (_control.GetComponent<Control>()._endOfGame)
-            {
-                _end.text = "No moves";
-            }
+    private void ShowMenu()
+    {
+        _endScores.enabled = true;
+        _endCoin.enabled = true;
+        _play.enabled = false;
+        _win.gameObject.SetActive(true);
+        _ingame.SetActive(false);
+        _end.enabled = true;
+        _menu.gameObject.SetActive(true);
+        _menu.sprite = _spritesMenu[_control.GetComponent<Control>().colourScheme];
+        _prefMenu.sprite = _spritesMenu[_control.GetComponent<Control>().colourScheme];
+        _win.enabled = true;
+        _win.sprite = _sprites[_control.GetComponent<Control>().colourScheme];
+        _endScores.text = _control.GetComponent<Control>().scores.ToString();
+
+        if (_control.GetComponent<Control>().time <= 0)
+        {
+            _end.text = "End of time";
+        }
+        if (_control.GetComponent<Control>()._endOfGame)
+        {
+            _end.text = "No moves";
         }
     }
 
@@ -142,13 +147,11 @@ public class Canvas : MonoBehaviour
     public void Preferences()
     {
         _prefMenu.gameObject.SetActive(true);
-
     }
 
     public void QuitPreferences()
     {
         _prefMenu.gameObject.SetActive(false);
-
     }
 
     public void Pause()
