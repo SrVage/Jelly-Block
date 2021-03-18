@@ -13,21 +13,23 @@ public class Canvas : MonoBehaviour
 
     [Header ("Menu")]
     [SerializeField] private Image _menu = null;
-    [SerializeField] private Image _win = null;
+    //[SerializeField] private Image _win = null;
     [SerializeField] private Text _end = null;
     [SerializeField] private Text _endScores = null;
-    [SerializeField] private Image _endCoin = null;
-    [SerializeField] private Image _righArrow = null;
-    [SerializeField] private Image _close = null;
-    [SerializeField] private Image _preferences = null;
+   // [SerializeField] private Image _righArrow = null;
+   // [SerializeField] private Image _close = null;
+   // [SerializeField] private Image _preferences = null;
     [SerializeField] private Image _play = null;
 
     [Header("Preferences")]
     [SerializeField] private Image _prefMenu = null;
     [SerializeField] private Image _accept = null;
     [SerializeField] private Image _prefIcon = null;
-    [SerializeField] private Slider _music = null;
-    [SerializeField] private Slider _sound = null;
+    [SerializeField] private Toggle _music = null;
+    [SerializeField] private Toggle _sound = null;
+    [SerializeField] private Toggle _haptic = null;
+    //[SerializeField] private Slider _music = null;
+    //[SerializeField] private Slider _sound = null;
 
 
 
@@ -38,6 +40,7 @@ public class Canvas : MonoBehaviour
 
     public float mus = 1;
     public float sound = 1;
+    public float haptic = 1;
 
 
 
@@ -48,8 +51,8 @@ public class Canvas : MonoBehaviour
     {
         Time.timeScale = 1;
         _ingame.SetActive(true);
-        _win.gameObject.SetActive(false);
-        _win.enabled = false;
+       // _win.gameObject.SetActive(false);
+       // _win.enabled = false;
         _end.enabled = false;
         _prefMenu.gameObject.SetActive(false);
         _menu.gameObject.SetActive(false);
@@ -61,9 +64,9 @@ public class Canvas : MonoBehaviour
         if (_control.GetComponent<Control>().colourScheme == 0)
         {
             
-            r = 237f/255f;
-            g = 253f/255f;
-            b = 104f/255f;
+            r = 255f/255f;
+            g = 255f/255f;
+            b = 255f/255f;
         }
         if (_control.GetComponent<Control>().colourScheme == 1)
         {
@@ -87,21 +90,26 @@ public class Canvas : MonoBehaviour
         _scores.color = new Color(r, g, b);
         _end.color = new Color(r, g, b);
         _endScores.color = new Color(r, g, b);
-        _righArrow.color = new Color(r, g, b); ;
-        _close.color = new Color(r, g, b);
-        _preferences.color = new Color(r, g, b);
         _accept.color = new Color(r, g, b);
         _prefIcon.color = new Color(r, g, b);
         _pause.color = new Color(r, g, b);
-        _play.color = new Color(r, g, b);
     }
 
     // Update is called once per frame
     void Update()
     {
-             mus = _music.value;
-            sound = _sound.value;
-            _time.text = _control.GetComponent<Control>()._minutes.ToString() + ":" + _control.GetComponent<Control>()._seconds.ToString();
+        // mus = _music.value;
+        //sound = _sound.value;
+        if (_music.isOn) mus = 1;
+        else mus = 0;
+
+        if (_sound.isOn) sound = 1;
+        else sound = 0;
+
+        if (_haptic.isOn) haptic = 1;
+        else haptic = 0;
+
+        _time.text = _control.GetComponent<Control>()._minutes.ToString() + ":" + _control.GetComponent<Control>()._seconds.ToString();
             _scores.text = _control.GetComponent<Control>().scores.ToString();
         if (_control.GetComponent<Control>().time <= 0 || _control.GetComponent<Control>()._endOfGame)
         {
@@ -112,17 +120,16 @@ public class Canvas : MonoBehaviour
     private void ShowMenu()
     {
         _endScores.enabled = true;
-        _endCoin.enabled = true;
-        _play.enabled = false;
-        _win.gameObject.SetActive(true);
+       // _play.enabled = false;
+        //_win.gameObject.SetActive(true);
         _ingame.SetActive(false);
         _end.enabled = true;
         _menu.gameObject.SetActive(true);
         _menu.sprite = _spritesMenu[_control.GetComponent<Control>().colourScheme];
         _prefMenu.sprite = _spritesMenu[_control.GetComponent<Control>().colourScheme];
-        _win.enabled = true;
-        _win.sprite = _sprites[_control.GetComponent<Control>().colourScheme];
-        _endScores.text = _control.GetComponent<Control>().scores.ToString();
+       // _win.enabled = true;
+       // _win.sprite = _sprites[_control.GetComponent<Control>().colourScheme];
+        _endScores.text = "FINAL SCORE: " + _control.GetComponent<Control>().scores.ToString();
 
         if (_control.GetComponent<Control>().time <= 0)
         {
@@ -144,37 +151,29 @@ public class Canvas : MonoBehaviour
         Application.Quit();
     }
 
-    public void Preferences()
-    {
-        _prefMenu.gameObject.SetActive(true);
-    }
 
     public void QuitPreferences()
     {
         _prefMenu.gameObject.SetActive(false);
+        _ingame.SetActive(true);
+        Time.timeScale = 1;
     }
 
     public void Pause()
     {
         Time.timeScale = 0;
-        _play.enabled = true;
-        _win.gameObject.SetActive(true);
+       // _win.gameObject.SetActive(true);
         _ingame.SetActive(false);
         _end.enabled = true;
-        _menu.gameObject.SetActive(true);
-        _menu.sprite = _spritesMenu[_control.GetComponent<Control>().colourScheme];
-        _prefMenu.sprite = _spritesMenu[_control.GetComponent<Control>().colourScheme];
-        _win.enabled = true;
-        _win.sprite = _sprites[_control.GetComponent<Control>().colourScheme];
-        _endScores.enabled = false;
-        _endCoin.enabled = false;
-        _end.text = "Pause";
+        _prefMenu.gameObject.SetActive(true);
+             //  _win.enabled = true;
+      //  _win.sprite = _sprites[_control.GetComponent<Control>().colourScheme];
     }
 
     public void Resume()
     {
         Time.timeScale = 1;
-        _win.gameObject.SetActive(false);
+      //  _win.gameObject.SetActive(false);
         _ingame.SetActive(true);
         _menu.gameObject.SetActive(false);
 

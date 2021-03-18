@@ -115,7 +115,7 @@ public class HorLine : MonoBehaviour
                 anim.SetTrigger("Destroy");
                 obj.GetComponent<BoxCollider2D>().enabled = false;
             }
-            Invoke("Coin", 0.2f);
+            Invoke("Coin", 0.1f);
         }
     }
 

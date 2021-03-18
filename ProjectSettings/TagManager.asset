@@ -9,6 +9,7 @@ TagManager:
   - StayBlock
   - ProjBlock
   - Checker
+  - Bs
   layers:
   - Default
   - TransparentFX

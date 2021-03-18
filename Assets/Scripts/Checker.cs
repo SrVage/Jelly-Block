@@ -12,7 +12,7 @@ public class Checker : MonoBehaviour
     {
         _control = GameObject.Find("Control");
         _startYPos = transform.position.y;
-        Invoke("Check", 0.2f);
+        Invoke("Check", 0.01f);
     }
     private void Check()
     {
@@ -20,8 +20,8 @@ public class Checker : MonoBehaviour
         for (int i = 0; i < transform.childCount; i++)
         {
             Transform child = gameObject.transform.GetChild(i);
-            if (child.GetComponent<Block>()._onBackground && !child.GetComponent<Block>().otherBlock)
-                _count++;
+                if (child.GetComponent<Block>()._onBackground && !child.GetComponent<Block>().otherBlock)
+                    _count++;
         }
         if (_count == transform.childCount)
         {
@@ -39,14 +39,14 @@ public class Checker : MonoBehaviour
         }
         else
         {
-            if (transform.position.y > ( _startYPos-1))
-            {
-                transform.position += new Vector3(-9, -1, 0);
-                //Check();
-                Invoke("Check", 0.04f);
-            }
-            else
-            {
+            //if (transform.position.y > ( _startYPos-1))
+            //{
+            //    transform.position += new Vector3(-9, -1, 0);
+            //    //Check();
+            //    Invoke("Check", 0.04f);
+            //}
+            //else
+            //{
                 _control.GetComponent<Control>().numOfChecker--;
                 Destroy(gameObject);
             }
@@ -54,4 +54,3 @@ public class Checker : MonoBehaviour
         }
         
     }
-}

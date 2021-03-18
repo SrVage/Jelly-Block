@@ -99,18 +99,6 @@ public class Board : MonoBehaviour
             offsetX = offsetX / shape.Length;
             offsetY = offsetY / shape.Length;
 
-            //if (n == 1 || n==6 || n==7)
-            //{
-            //    offsetX = 1;
-            //    offsetY = 1;
-            //}
-            //if (n==4)
-            //{
-            //    offsetX = 2;
-            //    offsetY = 1;
-            //}
-
-
             Sprite sprite = _sprites[Random.Range(0, _sprites.Length)];
             GameObject obj = new GameObject();
             
@@ -125,8 +113,13 @@ public class Board : MonoBehaviour
             bc.isTrigger = true;
             bc.size = new Vector2(4, 4);
             bc.offset = new Vector2(offsetX, offsetY);
-            obj.transform.position = new Vector3(6.5f+3f*j, -6, 0);
+            var point = new GameObject();
+            obj.transform.position = new Vector3(7.85f+2.65f*j-offsetX/2, -5.5f-offsetY/2, 0);
+            point.transform.position = obj.transform.position + new Vector3(offsetX, offsetY, 0);
+            point.transform.parent = obj.transform;
+            //obj.transform.parent = point.transform;
             obj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            obj.tag = "Bs";
             
         }
 

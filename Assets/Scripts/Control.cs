@@ -8,6 +8,7 @@ public class Control : MonoBehaviour
     [SerializeField] private GameObject _vertical = null;
     private Vector3 _posHor = new Vector3(10.5f, -2, 1);
     private Vector3 _posVer = new Vector3(7, 1.5f, 1);
+    private Vector3 _posBack = new Vector3(7f, -2f, 1);
     public bool isSimilarBlocks = false;
     private float _timer = 0;
     public bool clear = false;
@@ -24,11 +25,15 @@ public class Control : MonoBehaviour
     public int _recheck = 0;
     public int colourScheme = 0;
     [SerializeField] private GameObject _canvas = null;
+    [SerializeField] private GameObject _backgroundBlock = null;
+    private GameObject[] _blocks = null;
+    private int _prevCount = 0;
+    private float _backtime = 0;
 
     private void Awake()
     {
         Screen.orientation = ScreenOrientation.Portrait;
-        colourScheme = Random.Range(0, 4);
+        colourScheme = 0; //= Random.Range(0, 4);
         audio = GetComponent<AudioSource>();
         for (int i =0; i<8; i++)
         {
@@ -37,10 +42,29 @@ public class Control : MonoBehaviour
             Instantiate(_vertical, _posVer, Quaternion.identity);
             _posVer += new Vector3(1, 0, 0);
         }
+        for (int j = 0; j < 8; j++)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                Instantiate(_backgroundBlock, _posBack, Quaternion.identity);
+                _posBack += new Vector3(1, 0, 0);
+            }
+            _posBack += new Vector3(-8, 1, 0);
+
+        }
+
     }
 
     private void Update()
     {
+        _blocks = null;
+        _blocks = GameObject.FindGameObjectsWithTag("Bs");
+        if (_blocks.Length!=_prevCount)
+        {
+            move = 0;
+            startChecker = true;
+        }
+        _prevCount = _blocks.Length;
         audio.volume = _canvas.GetComponent<Canvas>().sound;
         if (time <= 0 || _endOfGame) return;
         time -= Time.deltaTime;
@@ -56,6 +80,16 @@ public class Control : MonoBehaviour
         {
            // StopCoroutine("Check");
             Invoke("Reset", 0.05f);
+        }
+        if (time<=11)
+        {
+            _backtime += Time.deltaTime;
+            if (_backtime >=1)
+            {
+                // Handheld.Vibrate();
+                if (_canvas.GetComponent<Canvas>().haptic!=0) AndroidManager.HapticFeedback();
+                _backtime = 0;
+            }
         }
     }
 
